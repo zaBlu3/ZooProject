@@ -1,0 +1,15 @@
+﻿global using AutoMapper;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.AspNetCore.SignalR;
+global using Microsoft.EntityFrameworkCore;
+global using System.ComponentModel.DataAnnotations;
+global using Zoo.DataAccess.Data;
+global using Zoo.DataAccess.Repositories;
+global using Zoo.DataAccess.Repositories.InterfaceRepo;
+global using Zoo.Models;
+global using Zoo.Models.Zoo;
+global using ZooAPI.DTO;
+global using ZooAPI.Helper;
+global using ZooAPI.Hubs;
+global using ZooAPI.Hubs.Infra;
+global using ZooWeb.BL;

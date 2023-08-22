@@ -1,0 +1,38 @@
+﻿@model Category
+
+@{
+	string mode = Model.CategoryId == 0 ? "Create" : "Update";
+	ViewData["Title"] = mode + "Category";
+	var ajaxURL = $"{ViewData["Url"]}{(mode == "Update" ? Model.CategoryId : "")}";
+}
+
+
+
+<h2>@ViewData["Title"]</h2>
+
+<form  class="validateForm" id="categoryForm">
+	@if (Model.CategoryId != 0)
+	{
+		@Html.HiddenFor(m => m.CategoryId)
+	}
+	<div class="form-group">
+		<label asp-for="Name">Name:</label>
+		<input asp-for="Name" class="form-control" />
+		<span asp-validation-for="Name" class="text-danger"></span>
+	</div>
+	<div class="d-flex justify-content-end mt-3">
+		<button type="submit" class="btn btn-primary">Submit</button>
+		<a asp-controller="Category" asp-action="Table" class="btn btn-secondary ml-2" onclick="clearCookies()">Cancel</a> <!-- Use the "ml-2" class to add a left margin to the "Cancel" button -->
+	</div>
+</form>
+
+
+@section Scripts{
+	<partial name="_ValidationScriptsPartial" />
+	<script>
+		const MODE ="@(mode == "Create" ? "POST" : "PUT")"
+		const API_URL = "@ajaxURL"
+	</script>
+	<script src="~/js/category/upsert.js"></script>
+}
+

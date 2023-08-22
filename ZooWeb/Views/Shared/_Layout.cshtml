@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"] - ZooWeb</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+	<link rel="stylesheet" href="~/lib/toastr/css/toastr.min.css" />
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/ZooWeb.styles.css" asp-append-version="true" />
+	@await RenderSectionAsync("Styles", required: false)
+
+
+
+</head>
+<body>
+	<partial name="_Header" />
+	<div class="container">
+		<main role="main" class="pb-3">
+			@RenderBody()
+		</main>
+	</div>
+	<partial name="_Footer" />
+
+
+
+
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/lib/toastr/js/toastr.min.js"></script>
+	<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+	<partial name="_Notifications" />
+
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

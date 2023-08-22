@@ -1,0 +1,14 @@
+﻿@model Comment
+<h2>Add Comment</h2>
+<form class="validateForm" asp-controller="Comment" asp-action="Add" method="post">
+	<input type="hidden" asp-for="AnimalId"/>
+	<input type="hidden" name="Username" value="@User.Identity!.Name"/>
+	<div class="form-group">
+		<textarea asp- asp-for="Text" class="form-control" rows="4" placeholder="Enter your comment"></textarea>
+		<span asp-validation-for="Text" class="text-danger"></span>
+
+	</div>
+	<button type="submit" class="btn btn-primary">Add Comment</button>
+	<a asp-controller="Animal" asp-action="Cards" class="btn btn-secondary ml-2">Cancel</a> 
+</form>
+

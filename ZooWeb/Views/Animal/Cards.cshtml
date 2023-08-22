@@ -1,0 +1,192 @@
+﻿@model IEnumerable<Animal>
+
+@{
+	ViewData["Title"] = "Animals";
+	SortModel sortModel = ViewBag.sortModel;
+	PaginModel pageModel = ViewBag.pageModel;
+
+}
+
+@section Styles {
+	<link rel="stylesheet" href="/css/cards.css">
+}
+
+
+<div class="text-center">
+	<h1 class="display-4">Animals</h1>
+	@if (User.IsInRole(Roles.Admin))
+	{
+		<div id="filters" class="row mt-4 mb-4 text-center">
+			<a class="btn-primary btn" asp-controller="Animal" asp-action="Add"><i class="far fa-plus-square me-1"></i>Add Animal</a>
+		</div>
+	}
+	<div id="filters" class="row mt-4 mb-4">
+		<div class="col-md-7">
+			<div class="btn-group" role="group" aria-label="Sort Animals">
+				<a class="btn" data-sort-expression="@sortModel.GetColumn("name")!.SortExpression">
+					Sort by @Html.DisplayNameFor(model=>model.Name)
+					<i class="@sortModel.GetColumn("name")!.SortIcon"></i>
+				</a>
+				<a class="btn"
+				   data-sort-expression="@sortModel.GetColumn("age")!.SortExpression">
+					Sort by @Html.DisplayNameFor(model=>model.Age)
+					<i class="@sortModel.GetColumn("age")!.SortIcon"></i>
+				</a>
+				<a class="btn" data-sort-expression="@sortModel.GetColumn("commentsCount")!.SortExpression">
+					Sort by @Html.DisplayNameFor(model=>model.Comments) Count
+					<i class="@sortModel.GetColumn("commentsCount")!.SortIcon"></i>
+				</a>
+			</div>
+		</div>
+
+		<div class="col-2">
+			<select id="categoryDropdown" class="btn-primary form-select">
+				<option value="" disabled="@(ViewBag.SelectedCategory==0)" selected>---All---</option>
+				@foreach (var category in ViewBag.CategoryList)
+				{
+					bool isSelected = ViewBag.SelectedCategory == category.CategoryId;
+					<option value="@category.CategoryId" disabled="@isSelected" selected="@isSelected">@category.Name</option>
+				}
+			</select>
+		</div>
+
+
+		<div class="col-md-3">
+			<form id="searchForm" class="input-group" asp-controller="Animal" asp-action="Cards" method="get">
+				<input value="@(ViewBag.SearchString ?? "")" name="searchString" type="text" class="form-control" placeholder="Enter search criteria" aria-label="Search" />
+				<div class="input-group-append">
+					<input class="btn btn-outline-secondary" type="submit" value="Search" />
+				</div>
+
+			</form>
+
+		</div>
+
+
+
+	</div>
+
+
+
+
+
+	<div id="animal-cards" class="row">
+		@foreach (var animal in Model)
+		{
+			<div class="col-md-4 mb-4">
+				<div class="card h-100 text-white bg-dark">
+
+					@{
+						int imageCount = animal.AnimalImages.Count;
+					}
+
+					@if (imageCount > 1)
+					{
+						<div id="carousel@(animal.AnimalId)" class="carousel slide carousel-fade" data-bs-interval="false">
+							<div class="carousel-indicators">
+								@for (int i = 0; i < imageCount; i++)
+								{
+									<button type="button" data-bs-target="#carousel@(animal.AnimalId)" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-current="true" aria-label="Slide @(i + 1)"></button>
+								}
+							</div>
+							<div class="carousel-inner">
+								@for (int i = 0; i < imageCount; i++)
+								{
+									<div class="carousel-item @(i == 0 ? "active" : "")">
+										<img loading="lazy" src="@animal.AnimalImages![i].ImageURI" class="card-img-top" alt="@animal.Name">
+									</div>
+								}
+							</div>
+
+							<button class="carousel-control-prev" type="button" data-bs-target="#carousel@(animal.AnimalId)" data-bs-slide="prev">
+								<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+								<span class="visually-hidden">Previous</span>
+							</button>
+							<button class="carousel-control-next" type="button" data-bs-target="#carousel@(animal.AnimalId)" data-bs-slide="next">
+								<span class="carousel-control-next-icon" aria-hidden="true"></span>
+								<span class="visually-hidden">Next</span>
+							</button>
+
+						</div>
+					}
+					else
+					{
+						<img loading="lazy" src="@animal.AnimalImages![0].ImageURI" class="card-img-top" alt="@animal.Name">
+					}
+
+
+					<h5 class="card-header">@animal.Name</h5>
+
+
+
+
+					<div class="card-body">
+
+						<p class="card-text">Age: @animal.Age</p>
+						<p class="card-text">Comments: @(animal.Comments?.Count() ?? 0)</p>
+						<div class="card-text description">
+							Description: @Html.Raw(@animal.Description)
+
+							<div>
+								<a class="card-link text-white" asp-controller="Animal" asp-action="Details" asp-route-id="@animal.AnimalId">View Details</a>
+								@if (User.IsInRole(Roles.Admin))
+								{
+									<a class="card-link text-white" asp-controller="Animal" asp-action="Edit" asp-route-id="@animal.AnimalId">Edit</a>
+									<button class="btn btn-link card-link text-danger" onclick="deleteAnimal(@animal.AnimalId)">Delete</button>
+								}
+							</div>
+						</div>
+
+
+					</div>
+
+
+				</div>
+			</div>
+		}
+	</div>
+
+
+	<nav>
+		<ul class="pagination justify-content-center">
+			<li class="page-item @(pageModel.AtFirstPage ? "disabled" : "")">
+				<a aria-label="First" class="page-link" asp-controller="Animal" asp-action="Cards" asp-route-pageNumber="1">
+					First
+
+				</a>
+			</li>
+			<li class="page-item @(pageModel.AtFirstPage ? "disabled" : "")">
+
+				<a aria-label="Previous" class="page-link" asp-controller="Animal" asp-action="Cards" asp-route-pageNumber="@(pageModel.CurrentPage - 1)">
+					<span aria-hidden="true">&laquo;</span>
+
+				</a>
+			</li>
+			@for (int i = pageModel.StartPage; i <= pageModel.LastPage; i++)
+			{
+				<li class="page-item @(i == pageModel.CurrentPage ? "active" : "")">
+					<a class="page-link" asp-controller="Animal" asp-action="Cards" asp-route-pageNumber="@i">@i</a>
+				</li>
+			}
+
+			<li class="page-item @(pageModel.AtLastPage ? "disabled" : "")">
+
+				<a aria-label="Next" class="page-link" asp-controller="Animal" asp-action="Cards" asp-route-pageNumber="@(pageModel.CurrentPage + 1)">
+					<span aria-hidden="true">&raquo;</span>
+				</a>
+			</li>
+			<li class="page-item @(pageModel.AtLastPage ? "disabled" : "")">
+
+				<a aria-label="Next" class="page-link" asp-controller="Animal" asp-action="Cards" asp-route-pageNumber="@pageModel.TotalPages">
+					Last
+				</a>
+			</li>
+
+
+		</ul>
+	</nav>
+
+</div>
+@section Scripts {
+	<script src="~/js/animal/cards.js"></script>
+}

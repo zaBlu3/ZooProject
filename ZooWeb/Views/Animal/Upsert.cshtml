@@ -1,0 +1,94 @@
+﻿@model UpsertAnimalVM
+@{
+	string mode = Model.Animal.AnimalId == 0 ? "Add" : "Edit";
+	int imageC = Model.Animal!.AnimalImages.Count;
+	ViewData["Title"] = mode +"Animal";
+}
+
+<div class="card shadow border-0 mt-4">
+	<div class="card-header bg-secondary bg-gradient m-lg-0 py-3">
+		<div class="row">
+			<div class="col-12 text-center">
+				<h1 class="py-2">@mode Animal</h1>
+
+			</div>
+		</div>
+	</div>
+	<div class="card-body p-4">
+		<div class="row">
+			<form class="validateForm col-10" asp-controller="Animal" asp-action="@mode" method="post" class="row" enctype="multipart/form-data">
+				@if (mode == "Edit")
+				{
+					<input type="hidden" asp-for="Animal!.AnimalId" />
+				}
+				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+			<div class="form-floating py-2 col-12">
+				<input asp-for="Animal!.Name" class="form-control border-0 shadow">
+				<label asp-for="Animal!.Name" class="ns-2"></label>
+
+				<span asp-validation-for="Animal!.Name" class="text-danger"></span>
+			</div>
+			<div class="form-floating py-2 col-12">
+				<input asp-for="Animal!.Age" class="form-control border-0 shadow">
+				<label asp-for="Animal!.Age" class="ns-2"></label>
+				<span asp-validation-for="Animal!.Age" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label asp-for="ImageFiles" class="ns-2"></label>
+				<input type="file" asp-for="ImageFiles" class="form-control-file border-0 shadow" multiple accept="image/jpeg">
+				<span asp-validation-for="ImageFiles" class="text-danger"></span>
+			</div>
+			<div class="py-2 col-12">
+				<label asp-for="Animal!.Description" class="text-muted ns-2"></label>
+				<textarea asp-for="Animal!.Description" class="form-control border-0 shadow"></textarea>
+				<span asp-validation-for="Animal!.Description" class="text-danger"></span>
+			</div>
+			<div class="form-floating py-2 col-12">
+				<select asp-for="Animal!.CategoryId" asp-items="@Model.CategoryList" class="form-select border-0 shadow">
+					<option disabled>-Select Category-</option>
+				</select>
+				<label asp-for="Animal!.CategoryId" class="ns-2"></label>
+				<span asp-validation-for="Animal!.CategoryId" class="text-danger"></span>
+			</div>
+			<button type="submit" class="btn btn-primary">Save</button>
+			<a asp-controller="Animal" asp-action="Cards" class="btn btn-secondary">Cancel</a>
+		</form>
+
+					<div class="col-2">
+			@foreach (var image in Model.Animal!.AnimalImages)
+				{
+					<div>
+						<img src="@image.ImageURI" style="width: 200px; height: 150px;" />
+						@if (imageC != 1)
+						{
+							<form onsubmit="return confirmSubmit()" method="post" asp-controller="Animal" asp-action="DeleteAnimalImage" asp-route-imageId="@image.ImageId">
+								<input type="hidden" name="ImageURI" asp-for="@image.ImageURI" />
+								<button type="submit" class="btn btn-danger"><i class="fas fa-trash me-2"></i> Delete Image</button>
+							</form>
+						}
+					</div>
+
+				}
+			
+		</div>
+
+		</div>
+
+	</div>
+</div>
+
+@section Scripts{
+	<partial name="_ValidationScriptsPartial" />
+	<script src="//cdn.tiny.cloud/1/8tw5t47q885syk0yaaksznedrw2pf39xy9ih5i6ipzcuffzi/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+	<script src="~/js/animal/upsert.js"></script>
+	<script>
+		const MAX_NUMBER_FILES = @(3 - imageC);
+		const MIN_NUMBER_FILES = @(imageC == 0 ? 1 : 0);
+	</script>
+	<script src="~/js/animal/upload-validation.js"></script>
+
+
+
+
+        }

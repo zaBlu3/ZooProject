@@ -1,0 +1,62 @@
+﻿@model Animal
+
+@{
+	ViewData["Title"] = "Animal Details";
+	bool isAdmin = User.IsInRole(Roles.Admin);
+}
+
+<h1>@Model.Name</h1>
+<p>Age: @Model.Age</p>
+<p>Description: @Html.Raw(@Model.Description)</p>
+
+<h2>Comments</h2>
+<div id="commentsDiv">
+
+	@if (Model.Comments != null && Model.Comments.Count != 0)
+	{
+		foreach (var comment in Model.Comments)
+		{
+
+			<div class="card mb-3" id="comment-@comment.CommentId">
+				@if (isAdmin || User.Identity!.Name == comment.Username)
+				{
+					<div class="text-end">
+						<button type="button" class="btn-close bg-danger" aria-label="Delete" onclick="deleteComment(@comment.CommentId)">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					</div>
+					
+				}
+				<div class="card-body">
+					<p>@comment.Username</p>
+					<p>@comment.Text</p>
+					<p>@comment.Date.ToString("M/d/yyyy, h:mm:ss tt")</p>
+
+				</div>
+				
+			</div>
+		}
+	}
+	else
+	{
+		<p id="noCommentMessage">No comments yet.</p>
+	}
+</div>
+
+
+@await Component.InvokeAsync("CommentsForm",new Comment{AnimalId=Model.AnimalId})
+@section Scripts{
+	<script src="/js/comment/hubCommentConnection.js"></script>
+	<script>
+		const USERNAME = "@User.Identity!.Name";
+		const IS_ADMIN = "@isAdmin" === "True";
+	</script>
+	@if (User.Identity!.IsAuthenticated)
+	{
+		<partial name="_ValidationScriptsPartial" />
+		<script src="/js/comment/add.js"></script>
+		<script src="/js/comment/remove.js"></script>
+	}
+
+
+}

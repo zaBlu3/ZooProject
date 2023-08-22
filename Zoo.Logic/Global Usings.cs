@@ -1,0 +1,10 @@
+﻿global using Logic.Validation.CustomExceptions;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Configuration;
+global using System.ComponentModel.DataAnnotations;
+global using System.Linq.Expressions;
+global using Zoo.DataAccess.Repositories.InterfaceRepo;
+global using Zoo.Logic.Validation;
+global using Zoo.Models;
+global using Zoo.Models.Zoo;
+global using Zoo.Models.Zoo.Enums;

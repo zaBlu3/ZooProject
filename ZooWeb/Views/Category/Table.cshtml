@@ -1,0 +1,35 @@
+﻿@{
+	ViewData["Title"] = "show";
+	var ajaxURL = ViewData["Url"];
+
+}
+
+
+
+
+
+<h1>Categories Table</h1>
+<div>
+	<table id="categoryTable" class="order-column hover table" style="width:100%">
+
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Animal Count</th>
+				<th>Action</th>
+
+
+			</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+</div>
+
+@section Scripts{
+	<link rel="stylesheet" href="//cdn.datatables.net/1.13.5/css/dataTables.bootstrap5.min.css" />
+	<script src="//cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+	<script src="//cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
+	<script src="//cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+	<script>const API_URL = "@ajaxURL"</script>
+	<script src="~/js/category/table.js"></script>
+}
